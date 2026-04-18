@@ -20,14 +20,14 @@ type PostModule = {
 	metadata: PostMetadata;
 };
 
-const postImporters = import.meta.glob('/src/posts/*.md');
-const postMetadataModules = import.meta.glob('/src/posts/*.md', { eager: true }) as Record<
+const postImporters = import.meta.glob('/src/posts/*.svx');
+const postMetadataModules = import.meta.glob('/src/posts/*.svx', { eager: true }) as Record<
 	string,
 	PostModule
 >;
 
 function getSlugFromPath(path: string): string {
-	return path.split('/').at(-1)?.replace('.md', '') ?? '';
+	return path.split('/').at(-1)?.replace('.svx', '') ?? '';
 }
 
 function sortNewestFirst(a: PostSummary, b: PostSummary): number {
@@ -52,7 +52,7 @@ export function getPostSummary(slug: string): PostSummary | null {
 }
 
 export async function loadPost(slug: string): Promise<Post | null> {
-	const path = `/src/posts/${slug}.md`;
+	const path = `/src/posts/${slug}.svx`;
 	const importer = postImporters[path];
 
 	if (!importer) return null;

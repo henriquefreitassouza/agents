@@ -4,17 +4,18 @@ A SvelteKit + mdsvex starter focused on a clean content architecture and a reusa
 
 This project gives you:
 
-- file-based blog posts in markdown
+- file-based blog posts in `.svx`
 - frontmatter-driven metadata (`title`, `description`, `date`, `tags`)
 - a blog listing page (`/blog`)
 - dynamic post routes (`/blog/[slug]`)
+- mdx-like authoring with embedded Svelte markup and logic
 - customizable theme tokens and reusable UI components
 
 ## Project objective
 
 The main goal is to provide a practical baseline for teams or creators who want to:
 
-1. write content in markdown
+1. write content in `.svx` with frontmatter + interactive blocks
 2. keep blog structure simple and scalable
 3. style pages consistently using reusable components and theme variables
 4. adapt the system quickly for their own brand/project
@@ -34,7 +35,7 @@ src/
   lib/
     components/                    # reusable themed UI components
     posts.ts                       # post loading and metadata helpers
-  posts/                           # markdown blog posts with frontmatter
+  posts/                           # .svx blog posts with frontmatter + Svelte
   routes/
     +layout.svelte                 # global shell/header and app-level styling import
     +page.svelte                   # themed homepage
@@ -43,7 +44,7 @@ src/
       +page.svelte                 # blog listing UI
       [slug]/
         +page.ts                   # slug validation and metadata loader
-        +page.svelte               # markdown post renderer
+        +page.svelte               # svx post renderer
 ```
 
 ## Run locally
@@ -57,11 +58,11 @@ Open `http://localhost:5173`.
 
 ## Content authoring guide
 
-Add new posts as `.md` files inside `src/posts`.
+Add new posts as `.svx` files inside `src/posts`.
 
 Example:
 
-```md
+```svx
 ---
 title: My New Post
 description: What this post is about.
@@ -71,13 +72,21 @@ tags:
   - tutorial
 ---
 
+<script>
+	let count = 0;
+</script>
+
 Your markdown content goes here.
+
+<button on:click={() => (count += 1)}>Track progress</button>
+<p>Completed steps: {count}</p>
 ```
 
 Notes:
 
-- the filename becomes the slug (for example `my-new-post.md` -> `/blog/my-new-post`)
+- the filename becomes the slug (for example `my-new-post.svx` -> `/blog/my-new-post`)
 - posts are sorted by date (newest first)
+- you can embed Svelte blocks (components, loops, conditionals, scripts, media) in posts
 
 ## Customize the design theme
 
@@ -124,7 +133,7 @@ import '../app.css';
 
 ### 5) Start writing posts
 
-Create markdown files in `src/posts` and your blog will populate automatically.
+Create `.svx` files in `src/posts` and your blog will populate automatically.
 
 ## Quality checks
 
