@@ -2,10 +2,10 @@
 	let { label } = $props<{ label: string }>();
 </script>
 
-<span>{label}</span>
+<span class="tag">{label}</span>
 
 <style>
-	span {
+	.tag {
 		display: inline-flex;
 		align-items: center;
 		padding: 0.22rem 0.62rem;

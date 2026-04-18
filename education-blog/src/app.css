@@ -5,9 +5,11 @@
 	--surface-muted: #eef2ff;
 	--text: #13213d;
 	--text-muted: #475569;
-	--primary: #4f46e5;
+	--primary: #4338ca;
 	--primary-soft: #e0e7ff;
 	--border: #dbe4f0;
+	--focus-ring: #1d4ed8;
+	--focus-ring-offset: #ffffff;
 	--radius-sm: 10px;
 	--radius-md: 16px;
 	--radius-lg: 24px;
@@ -27,11 +29,70 @@ body {
 	font-family: var(--font-sans);
 	background: radial-gradient(circle at top right, #eef2ff 0%, var(--bg) 45%);
 	color: var(--text);
-	line-height: 1.6;
+	line-height: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
 }
 
 a {
 	color: var(--primary);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+	outline: 3px solid var(--focus-ring);
+	outline-offset: 2px;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+	outline: none;
+}
+
+.skip-link {
+	position: absolute;
+	left: 0.75rem;
+	top: 0.75rem;
+	z-index: 100;
+	padding: 0.65rem 1rem;
+	border-radius: var(--radius-sm);
+	background: var(--surface);
+	color: var(--text);
+	font-weight: 600;
+	text-decoration: none;
+	border: 2px solid var(--border);
+	box-shadow: var(--shadow-sm);
+	transform: translateY(-120%);
+	transition: transform 0.15s ease;
+}
+
+.skip-link:focus {
+	transform: translateY(0);
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
 
 h1,
@@ -59,4 +120,23 @@ p {
 .prose p,
 .prose li {
 	color: var(--text-muted);
+}
+
+.prose a {
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.prose a:hover {
+	text-decoration-thickness: 2px;
+}
+
+.prose :where(video, img) {
+	max-width: 100%;
+	height: auto;
+}
+
+.table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 }

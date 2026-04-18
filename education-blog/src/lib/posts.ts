@@ -1,9 +1,11 @@
 import type { Component } from 'svelte';
+import type { AppLocale } from './i18n';
+import { SUPPORTED_LOCALES } from './i18n';
 
 export type PostMetadata = {
 	title: string;
 	description: string;
-	date: string;
+	date: string | Date;
 	tags?: string[];
 };
 
@@ -20,48 +22,81 @@ type PostModule = {
 	metadata: PostMetadata;
 };
 
-const postImporters = import.meta.glob('/src/posts/*.svx');
-const postMetadataModules = import.meta.glob('/src/posts/*.svx', { eager: true }) as Record<
+const postImporters = import.meta.glob('/src/posts/*/*.svx');
+const postMetadataModules = import.meta.glob('/src/posts/*/*.svx', { eager: true }) as Record<
 	string,
 	PostModule
 >;
 
-function getSlugFromPath(path: string): string {
-	return path.split('/').at(-1)?.replace('.svx', '') ?? '';
+function parseLocaleAndSlug(path: string): { locale: string; slug: string } | null {
+	const m = path.match(/^\/src\/posts\/([^/]+)\/([^/]+)\.svx$/);
+	if (!m) return null;
+	return { locale: m[1], slug: m[2] };
 }
 
 function sortNewestFirst(a: PostSummary, b: PostSummary): number {
-	return new Date(b.date).getTime() - new Date(a.date).getTime();
+	const toMs = (d: string | Date) => (d instanceof Date ? d : new Date(d)).getTime();
+	return toMs(b.date) - toMs(a.date);
 }
 
-export function getAllPosts(): PostSummary[] {
+function normalizeMetadata(module: Partial<PostModule>, path: string): PostMetadata | null {
+	const meta = module.metadata;
+	if (!meta || typeof meta.title !== 'string') {
+		if (import.meta.env.DEV) {
+			console.warn(`[posts] Missing or invalid frontmatter metadata for ${path}`);
+		}
+		return null;
+	}
+	return meta;
+}
+
+export function getAllPosts(locale: AppLocale): PostSummary[] {
 	return Object.entries(postMetadataModules)
-		.map(([path, module]) => ({
-			slug: getSlugFromPath(path),
-			...module.metadata
-		}))
+		.map(([path, module]) => {
+			const ids = parseLocaleAndSlug(path);
+			if (!ids || ids.locale !== locale) return null;
+			const meta = normalizeMetadata(module, path);
+			if (!meta) return null;
+			return {
+				slug: ids.slug,
+				...meta
+			};
+		})
+		.filter((p): p is PostSummary => p !== null)
 		.sort(sortNewestFirst);
 }
 
-export function hasPost(slug: string): boolean {
-	return getAllPosts().some((post) => post.slug === slug);
+export function hasPost(locale: AppLocale, slug: string): boolean {
+	return getAllPosts(locale).some((post) => post.slug === slug);
 }
 
-export function getPostSummary(slug: string): PostSummary | null {
-	return getAllPosts().find((post) => post.slug === slug) ?? null;
+export function getPostSummary(locale: AppLocale, slug: string): PostSummary | null {
+	return getAllPosts(locale).find((post) => post.slug === slug) ?? null;
 }
 
-export async function loadPost(slug: string): Promise<Post | null> {
-	const path = `/src/posts/${slug}.svx`;
+export async function loadPost(locale: AppLocale, slug: string): Promise<Post | null> {
+	const path = `/src/posts/${locale}/${slug}.svx`;
 	const importer = postImporters[path];
 
 	if (!importer) return null;
 
 	const module = (await importer()) as PostModule;
+	const meta = normalizeMetadata(module, path);
+	if (!meta) return null;
 
 	return {
 		slug,
-		...module.metadata,
+		...meta,
 		component: module.default
 	};
+}
+
+/** Locales that actually have a post file for this slug (for hreflang / switcher). */
+export function getLocalesForSlug(slug: string): AppLocale[] {
+	const found = new Set<string>();
+	for (const path of Object.keys(postMetadataModules)) {
+		const ids = parseLocaleAndSlug(path);
+		if (ids?.slug === slug) found.add(ids.locale);
+	}
+	return SUPPORTED_LOCALES.filter((l) => found.has(l));
 }

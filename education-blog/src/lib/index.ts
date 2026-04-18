@@ -3,3 +3,4 @@ export { default as SectionHeading } from './components/SectionHeading.svelte';
 export { default as SurfaceCard } from './components/SurfaceCard.svelte';
 export { default as TagPill } from './components/TagPill.svelte';
 export { default as ButtonLink } from './components/ButtonLink.svelte';
+export { default as LanguageSwitcher } from './components/LanguageSwitcher.svelte';

@@ -1,12 +1,13 @@
 <script lang="ts">
-	let { title, subtitle = '' } = $props<{
+	let { title, subtitle = '', headingId = 'page-heading' } = $props<{
 		title: string;
 		subtitle?: string;
+		headingId?: string;
 	}>();
 </script>
 
-<header class="heading">
-	<h1>{title}</h1>
+<header class="heading" aria-labelledby={headingId}>
+	<h1 id={headingId}>{title}</h1>
 	{#if subtitle}
 		<p>{subtitle}</p>
 	{/if}

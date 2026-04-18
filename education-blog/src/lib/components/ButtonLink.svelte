@@ -1,19 +1,38 @@
 <script lang="ts">
-	let { href, text, tone = 'solid' } = $props<{
+	let {
+		href,
+		text,
+		tone = 'solid',
+		ariaCurrent = false,
+		ariaLabel
+	} = $props<{
 		href: string;
 		text: string;
 		tone?: 'solid' | 'ghost';
+		ariaCurrent?: boolean;
+		ariaLabel?: string;
 	}>();
 </script>
 
-<a {href} class:tone-solid={tone === 'solid'} class:tone-ghost={tone === 'ghost'}>
+<a
+	{href}
+	class:tone-solid={tone === 'solid'}
+	class:tone-ghost={tone === 'ghost'}
+	aria-current={ariaCurrent ? 'page' : undefined}
+	aria-label={ariaLabel}
+>
 	{text}
 </a>
 
 <style>
 	a {
 		text-decoration: none;
-		padding: 0.5rem 0.85rem;
+		padding: 0.55rem 1rem;
+		min-height: 44px;
+		min-width: 44px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		border-radius: var(--radius-sm);
 		border: 1px solid transparent;
 		font-weight: 600;
