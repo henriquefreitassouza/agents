@@ -1,12 +1,13 @@
 import type { Component } from 'svelte';
 import type { AppLocale } from './i18n';
-import { SUPPORTED_LOCALES } from './i18n';
+import { isSupportedLocale, SUPPORTED_LOCALES } from './i18n';
 
 export type PostMetadata = {
 	title: string;
 	description: string;
 	date: string | Date;
 	tags?: string[];
+	translationKey?: string;
 };
 
 export type PostSummary = PostMetadata & {
@@ -38,6 +39,12 @@ function sortNewestFirst(a: PostSummary, b: PostSummary): number {
 	const toMs = (d: string | Date) => (d instanceof Date ? d : new Date(d)).getTime();
 	return toMs(b.date) - toMs(a.date);
 }
+
+type IndexedPost = {
+	locale: AppLocale;
+	slug: string;
+	translationKey: string;
+};
 
 function normalizeMetadata(module: Partial<PostModule>, path: string): PostMetadata | null {
 	const meta = module.metadata;
@@ -91,6 +98,28 @@ export async function loadPost(locale: AppLocale, slug: string): Promise<Post | 
 	};
 }
 
+function getIndexedPosts(): IndexedPost[] {
+	return Object.entries(postMetadataModules)
+		.map(([path, module]) => {
+			const ids = parseLocaleAndSlug(path);
+			if (!ids || !isSupportedLocale(ids.locale)) return null;
+			const meta = normalizeMetadata(module, path);
+			if (!meta) return null;
+
+			const translationKey =
+				typeof meta.translationKey === 'string' && meta.translationKey.trim().length > 0
+					? meta.translationKey.trim()
+					: ids.slug;
+
+			return {
+				locale: ids.locale,
+				slug: ids.slug,
+				translationKey
+			};
+		})
+		.filter((post): post is IndexedPost => post !== null);
+}
+
 /** Locales that actually have a post file for this slug (for hreflang / switcher). */
 export function getLocalesForSlug(slug: string): AppLocale[] {
 	const found = new Set<string>();
@@ -99,4 +128,26 @@ export function getLocalesForSlug(slug: string): AppLocale[] {
 		if (ids?.slug === slug) found.add(ids.locale);
 	}
 	return SUPPORTED_LOCALES.filter((l) => found.has(l));
+}
+
+export function getTranslatedSlug(
+	sourceLocale: AppLocale,
+	sourceSlug: string,
+	targetLocale: AppLocale
+): string | null {
+	const indexedPosts = getIndexedPosts();
+	const source = indexedPosts.find((post) => post.locale === sourceLocale && post.slug === sourceSlug);
+	if (!source) {
+		return hasPost(targetLocale, sourceSlug) ? sourceSlug : null;
+	}
+
+	const translation = indexedPosts.find(
+		(post) => post.locale === targetLocale && post.translationKey === source.translationKey
+	);
+
+	if (!translation) {
+		return hasPost(targetLocale, sourceSlug) ? sourceSlug : null;
+	}
+
+	return translation.slug;
 }

@@ -1,0 +1,17 @@
+<script module>
+	export const metadata = {
+		title: 'Primeiro post no education blog',
+		description: 'Estrutura minima para publicar conteudo com mdsvex.',
+		date: '2026-04-21',
+		translationKey: 'getting-started',
+		tags: ['guia', 'conteudo']
+	};
+</script>
+
+Este projeto facilita a criacao de artigos tecnicos com markdown e componentes Svelte.
+
+## Como publicar
+
+1. Adicione um arquivo `.svx` em `src/posts/pt`.
+2. Defina `title`, `description`, `date` e `tags` no frontmatter.
+3. Acesse `/pt/blog` para ver o artigo listado.

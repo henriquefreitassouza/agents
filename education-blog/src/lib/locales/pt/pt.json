@@ -1,0 +1,8 @@
+{
+	"home.hero.title": "Publique conteudo educacional mais rapido",
+	"home.hero.subtitle": "Uma base enxuta com SvelteKit + mdsvex, rotas por idioma e blocos de interface reutilizaveis.",
+	"home.hero.cta": "Ler posts",
+	"home.ready.title": "O que ja esta pronto",
+	"home.ready.text1": "Rotas, utilitarios para carregar posts e conteudo markdown de exemplo ja estao configurados.",
+	"home.ready.text2": "Crie arquivos `.svx` em `src/posts/en` ou `src/posts/pt` e eles aparecerao na lista do blog."
+}

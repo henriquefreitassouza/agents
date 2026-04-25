@@ -138,7 +138,7 @@ Create `.svx` files in `src/posts` and your blog will populate automatically.
 ## Quality checks
 
 ```sh
-yarn check
+yarn run check
 yarn build
 ```
 
