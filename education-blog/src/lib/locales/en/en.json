@@ -1,0 +1,8 @@
+{
+	"home.hero.title": "Publish educational content faster",
+	"home.hero.subtitle": "A small SvelteKit + mdsvex foundation with locale-aware routes and reusable UI blocks.",
+	"home.hero.cta": "Read posts",
+	"home.ready.title": "What is ready",
+	"home.ready.text1": "Routes, post loading utilities, and sample markdown content are configured to work out of the box.",
+	"home.ready.text2": "Create `.svx` files in `src/posts/en` or `src/posts/pt` and they will appear in the blog list."
+}

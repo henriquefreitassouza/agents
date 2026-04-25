@@ -1,0 +1,19 @@
+<script module>
+	export const metadata = {
+		title: 'Getting started with the education blog',
+		description: 'Understand the project structure and publish your first post.',
+		date: '2026-04-20',
+		translationKey: 'getting-started',
+		tags: ['starter', 'sveltekit']
+	};
+</script>
+
+This starter uses **SvelteKit** with **mdsvex** so you can mix markdown and Svelte.
+
+## First steps
+
+1. Copy this project.
+2. Create new `.svx` files in `src/posts/en` or `src/posts/pt`.
+3. Open the blog route and verify your content appears.
+
+You can also embed dynamic UI in your post content when needed.
